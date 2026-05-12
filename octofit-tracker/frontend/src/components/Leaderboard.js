@@ -6,19 +6,29 @@ const baseUrl = codespace
 	: 'http://localhost:8000';
 const endpoint = `${baseUrl}/api/leaderboard/`;
 
+
 function Leaderboard() {
 	const [leaderboard, setLeaderboard] = useState([]);
+	const [error, setError] = useState(null);
 
 	useEffect(() => {
 		console.log('Fetching leaderboard from:', endpoint);
 		fetch(endpoint)
-			.then(res => res.json())
+			.then(res => {
+				if (!res.ok) throw new Error(`HTTP ${res.status}`);
+				return res.json();
+			})
 			.then(data => {
 				const results = data.results || data;
 				setLeaderboard(results);
+				setError(null);
 				console.log('Fetched leaderboard:', results);
 			})
-			.catch(err => console.error('Error fetching leaderboard:', err));
+			.catch(err => {
+				setError(`Failed to fetch leaderboard: ${err.message}`);
+				setLeaderboard([]);
+				console.error('Error fetching leaderboard:', err);
+			});
 	}, []);
 
 	return (
@@ -27,6 +37,7 @@ function Leaderboard() {
 				<h2 className="mb-0">Leaderboard</h2>
 				<button className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addLeaderboardModal">Add Entry</button>
 			</div>
+			{error && <div className="alert alert-danger">{error}</div>}
 			<div className="card shadow-sm">
 				<div className="card-body">
 					<table className="table table-striped table-hover align-middle">

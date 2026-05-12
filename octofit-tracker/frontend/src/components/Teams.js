@@ -6,19 +6,29 @@ const baseUrl = codespace
 	: 'http://localhost:8000';
 const endpoint = `${baseUrl}/api/teams/`;
 
+
 function Teams() {
 	const [teams, setTeams] = useState([]);
+	const [error, setError] = useState(null);
 
 	useEffect(() => {
 		console.log('Fetching teams from:', endpoint);
 		fetch(endpoint)
-			.then(res => res.json())
+			.then(res => {
+				if (!res.ok) throw new Error(`HTTP ${res.status}`);
+				return res.json();
+			})
 			.then(data => {
 				const results = data.results || data;
 				setTeams(results);
+				setError(null);
 				console.log('Fetched teams:', results);
 			})
-			.catch(err => console.error('Error fetching teams:', err));
+			.catch(err => {
+				setError(`Failed to fetch teams: ${err.message}`);
+				setTeams([]);
+				console.error('Error fetching teams:', err);
+			});
 	}, []);
 
 	return (
@@ -27,6 +37,7 @@ function Teams() {
 				<h2 className="mb-0">Teams</h2>
 				<button className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTeamModal">Add Team</button>
 			</div>
+			{error && <div className="alert alert-danger">{error}</div>}
 			<div className="card shadow-sm">
 				<div className="card-body">
 					<table className="table table-striped table-hover align-middle">
