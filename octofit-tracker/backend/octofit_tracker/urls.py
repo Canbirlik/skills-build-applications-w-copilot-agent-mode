@@ -17,6 +17,7 @@ import os
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
+from rest_framework.decorators import api_view
 from .views import UserViewSet, TeamViewSet, ActivityViewSet, LeaderboardViewSet, WorkoutViewSet, api_root
 
 codespace_name = os.environ.get('CODESPACE_NAME')
@@ -32,6 +33,7 @@ router.register(r'activities', ActivityViewSet)
 router.register(r'leaderboard', LeaderboardViewSet)
 router.register(r'workouts', WorkoutViewSet)
 
+@api_view(['GET'])
 def api_root_with_url(request):
     from rest_framework.response import Response
     return Response({
