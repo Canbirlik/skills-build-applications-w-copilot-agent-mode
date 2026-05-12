@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 const codespace = process.env.REACT_APP_CODESPACE_NAME;
+// Dummy change to trigger Copilot/CI
 const baseUrl = codespace
 	? `https://${codespace}-8000.app.github.dev`
 	: 'http://localhost:8000';
